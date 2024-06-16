@@ -1,0 +1,44 @@
+import sqlite3
+conn = sqlite3.connect('project_management.db')
+cursor = conn.cursor()
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS projects (
+        project_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        project_name TEXT NOT NULL,
+        description TEXT,
+        start_date DATE,
+        end_date DATE
+    )
+''')
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS tasks (
+        task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_name TEXT NOT NULL,
+        description TEXT,
+        project_id INTEGER,
+        team_id INTEGER,
+        deadline DATE,
+        status TEXT,
+        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    )
+''')
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS teams (
+        team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        team_name TEXT NOT NULL
+    )
+''')
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS timelines (
+        timeline_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_id INTEGER,
+        date DATE,
+        status_update TEXT,
+        FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+    )
+''')
+conn.commit()
+conn.close()
+print("Database schema created successfully.")
